@@ -1,5 +1,6 @@
 import { CookieOptions, NextFunction, Request, Response } from "express";
 import { Role } from "@prisma/client";
+import { RegisterUserSchema } from "@kova/shared"; // packages/shared ke package.json name ke hisaab se adjust kar lena
 import { AppError } from "../../utils/AppError";
 import {
       refreshSession,
@@ -7,7 +8,7 @@ import {
 } from "./auth.service";
 
 /**
- * @description buisness logic store and retirive cookies and manage sessions.
+ * @description Store and retrieve auth cookies and manage sessions and type checks using shared schema.
  */
 
 const isProd = process.env.NODE_ENV === "production";
@@ -28,11 +29,14 @@ const refreshCookieOptions: CookieOptions = {
       path: "/api/auth",
 };
 
-function setAuthCookies(res: Response, accessToken: string, refreshToken: string) {
+function setAuthCookies(
+      res: Response,
+      accessToken: string,
+      refreshToken: string
+) {
       res.cookie("accessToken", accessToken, accessCookieOptions);
       res.cookie("refreshToken", refreshToken, refreshCookieOptions);
 }
-
 
 export async function register(
       req: Request,
@@ -40,27 +44,19 @@ export async function register(
       next: NextFunction
 ): Promise<void> {
       try {
-            const { email, password, name, role } = req.body as {
-                  email?: string;
-                  password?: string;
-                  name?: string;
-                  role?: Role;
-            };
-
-            if (!email || !password) {
-                  return next(new AppError("Email and password are required", 400));
+            const parsed = RegisterUserSchema.safeParse(req.body);
+            if (!parsed.success) {
+                  const message = parsed.error.issues[0]?.message || "Invalid input";
+                  return next(new AppError(message, 400));
             }
 
-            if (password.length < 8) {
-                  return next(
-                        new AppError("Password must be at least 8 characters long", 400)
-                  );
-            }
+            const { fullName, email, password } = parsed.data;
+            const role = req.body?.role as Role | undefined;
 
             const { user, accessToken, refreshToken } = await registerUser({
                   email,
                   password,
-                  name,
+                  name: fullName,
                   role,
             });
 
