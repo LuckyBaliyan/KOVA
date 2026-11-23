@@ -1,0 +1,29 @@
+# Dependencies (root + saare workspaces)
+node_modules/
+.pnp/
+.pnp.*
+
+# Environment variables & secrets (sab jagah ignore)
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Build outputs & cache
+dist/
+build/
+.turbo/
+.next/
+out/
+coverage/
+
+# Logs & OS files
+*.log
+npm-debug.log*
+pnpm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Prisma generated local artifacts (agar koi ho)
+prisma/*.db
+prisma/*.db-journal
