@@ -5,6 +5,11 @@ dotenv.config({
       path: path.resolve(__dirname, "../../.env"),
 });
 
+
+/**
+ * @description is any secret misses don't let the server to start
+ */
+
 if (!process.env.DATABASE_URL) {
       throw new Error("DATABASE_URL is not defined.");
 }
