@@ -32,7 +32,7 @@ export function verifyAcessToken(token: string): jwtPayload {
       return jwt.verify(token, env.jwtAccessSecret) as jwtPayload
 }
 
-export function verRefreshessToken(token: string): jwtPayload {
+export function verifyRefreshToken(token: string): jwtPayload {
       return jwt.verify(token, env.jwtRefreshSecret) as jwtPayload;
 }
 
