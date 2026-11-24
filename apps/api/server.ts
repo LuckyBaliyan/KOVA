@@ -1,6 +1,7 @@
 import "dotenv/config";
 import app from "./src/app";
 import { prisma } from "./src/lib/prisma";
+import { connectRedis } from "./src/lib/redis";
 
 const PORT = Number(process.env.PORT) || 4000;
 
@@ -12,17 +13,12 @@ app.get("/health", (_req, res) => {
       });
 });
 
-const server = app.listen(PORT, () => {
-      console.log(`KOVA API running on port ${PORT}`);
-});
+async function startServer() {
+      await connectRedis();
 
-async function shutdown(signal: string) {
-      console.log(`${signal} received. Closing server...`);
-      server.close(async () => {
-            await prisma.$disconnect();
-            process.exit(0);
+      app.listen(PORT, () => {
+            console.log(`KOVA API running on port ${PORT}`);
       });
 }
 
-process.on("SIGINT", () => shutdown("SIGINT"));
-process.on("SIGTERM", () => shutdown("SIGTERM"));
+startServer();

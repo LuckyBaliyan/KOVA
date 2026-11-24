@@ -26,9 +26,11 @@ export function requireAuth(req: Request, _res: Response, next: NextFunction): v
                   : undefined;
 
             if (!token) {
-                  return next(new AppError("Authentication required!", 401));
+                  return next(new AppError("Access token missing or expired!", 401));
             }
-
+            
+            //decode the current user id from token and pass to controllers so that we can validate user via its id 
+            // or even complete user object wherever required like getMe we need current logged in userId there
             const decoded = verifyAcessToken(token);
             req.user = decoded;
             return next();
