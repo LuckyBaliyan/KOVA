@@ -9,17 +9,19 @@ datasource db {
 }
 
 enum Role {
-      USER
+      BUYER
       SELLER
 }
 
 model User {
       id           String   @id @default(cuid())
       email        String   @unique
-      passwordHash String
+      passwordHash String?
+      googleId     String?  @unique
+      avatarUrl    String?
       name         String?
       phone        String?
-      role         Role     @default(USER)
+      role         Role     @default(BUYER)
       createdAt    DateTime @default(now())
       updateAt     DateTime @updatedAt
 }

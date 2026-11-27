@@ -4,7 +4,9 @@ import {
       refresh,
       login,
       logOut,
-      getMe
+      getMe,
+      googleCallback,
+      googleStart
 } from "./auth.controller"
 import { requireAuth } from "../../middlewares/requireAuth.middleware";
 
@@ -18,5 +20,10 @@ router.post("/logout", logOut);
 
 //need requireAuth here to validate current logged in person
 router.get("/getMe", requireAuth, getMe);
+
+
+// Google OAuth endpoints
+router.get("/google", googleStart);
+router.get("/google/callback", googleCallback);
 
 export default router;
